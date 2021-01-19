@@ -1,0 +1,1 @@
+É apenas um quiz, ainda tem alguns bugs mas a intenção é melhora-lo cada vez mais 

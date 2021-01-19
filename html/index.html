@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <link rel="stylesheet" href="../../Bootstrap/bootstrap4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="icon" href="../../chave.png">
+        <script src="../../jquery/jquery.min.js"></script>
+        <script src="../../Bootstrap/bootstrap4/js/bootstrap.bundle.min.js"></script>
+        <title>Quiz</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="quizTitle"></h1>
+            <div class="dropdown">
+                <div class="btn-group">
+                    <button class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#modal">Start Quiz</button>
+                    <button class="btn btn-outline-primary btn-lg dropdown-toggle" data-toggle="dropdown"></button>
+                    <ul class="dropdown-menu"></ul>
+                </div>
+                <div id="modal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header d-flex flex-column">
+                                <h3 class="modal-title"></h3>
+                                <span class="modal-question"></span>
+                            </div>
+                            <div class="modal-body"></div>
+                            <div class="modal-footer">
+                                <div class="btn-group">
+                                    <button class="btn btn-danger" data-dismiss="modal">Fechar</button>
+                                    <button class="btn btn-info disabled">Confirmar</button>
+                                    <button class="btn btn-success disabled">Próxima</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../js/quizjson.js"></script>
+        <script src="../js/quizclass.js"></script>
+        <script src="../js/script.js"></script>
+    </body>
+</html>
