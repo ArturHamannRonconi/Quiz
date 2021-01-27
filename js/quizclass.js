@@ -3,13 +3,15 @@ class Quiz{
     #arrayAlternativesGone
     #alternativesArea
     #currentQuestion
+    #buttonStartQuiz
     #buttonClose
     #buttonConfirm
     #buttonNext
     #score
-    constructor(quizzes, quizActive, buttonClose, buttonConfirm, buttonNext){
+    constructor(quizzes, quizActive, buttonStartQuiz, buttonClose, buttonConfirm, buttonNext){
         this.quizzes = quizzes;
-        this.quizActive = quizActive;        
+        this.quizActive = quizActive;     
+        this.#buttonStartQuiz = buttonStartQuiz;   
         this.#buttonClose = buttonClose;
         this.#buttonConfirm = buttonConfirm;
         this.#buttonNext = buttonNext;
@@ -19,34 +21,30 @@ class Quiz{
         this.#currentQuestion = "";
         this.#score = 0;
 
-        this.#buttonNext.addEventListener("click", () => {
-            this.nextQuestion();
+        this.#buttonStartQuiz.addEventListener("click", () => {
+            if(this.#arrayQuestionsGone.length === this.getCurrentQuiz().perguntas.length)
+                quiz.generateStructure(); 
         });
-        this.#buttonConfirm.addEventListener("click", () => {
-            this.confirmAlternative();
-        });
-        this.#buttonClose.addEventListener("click", () => {
-            this.closeModal();
-        });
+        this.#buttonNext.addEventListener("click", () => this.nextQuestion());
+        this.#buttonConfirm.addEventListener("click", () => this.confirmAlternative());
+        this.#buttonClose.addEventListener("click", () => this.closeModal());
         this.quizzes.forEach(quiz => {
-            quiz.addEventListener("click", (event) => {
-                this.selectQuiz(event.target);
-            });
+            quiz.addEventListener("click", (event) => this.selectQuiz(event.target));
         });
     }
     selectQuiz(quizTarget){
-        this.quizzes.forEach(quiz => {
-            quiz.classList.remove("active");
-        })
+        this.quizzes.forEach(quiz => quiz.classList.remove("active"));
         quizTarget.classList.add("active");
         this.quizActive = quizTarget;
         this.resetScore();
+        this.resetArrayQuestionsGone();
         this.generateStructure();
     }
     generateStructure(randomQuestion = this.generateNewRandomQuestion()){
         this.insertNameQuiz();
         this.insertQuestion(randomQuestion);
         this.insertAlternatives(this.getCurrentArrayAlternatives(randomQuestion));
+        this.removeWarning();
     }
     insertNameQuiz(){
         const quizTitle = document.querySelector(".quizTitle");
@@ -68,9 +66,7 @@ class Quiz{
 
             alternativeArea.classList.add("alternative");
             alternativeArea.innerHTML = alternative;
-            alternativeArea.addEventListener("click", (event) => {
-                this.clickAlternative(event.target);
-            });
+            alternativeArea.addEventListener("click", (event) => this.clickAlternative(event.target));
 
             modalBody.insertAdjacentElement("beforeend", alternativeArea);
             this.#alternativesArea.push(alternativeArea);
@@ -88,34 +84,38 @@ class Quiz{
     }
     getCurrentAlternativeCorrect(){
         const currentQuiz = this.getCurrentQuiz();
-        const currentAlternativeCorrect = currentQuiz.respostas[currentQuiz.perguntas.indexOf(this.#currentQuestion)].correta;
+        const indexCurrentQuestion = currentQuiz.perguntas.indexOf(this.#currentQuestion);
+        const currentAlternativeCorrect = currentQuiz.respostas[indexCurrentQuestion].correta;
         return currentAlternativeCorrect;
     }
     generateNewRandomQuestion(){
         const currentQuiz = this.getCurrentQuiz();
-        let randomQuestion = currentQuiz.perguntas[Math.round(Math.random() * (currentQuiz.perguntas.length - 1))];
-        if(this.#arrayQuestionsGone.length < currentQuiz.perguntas.length){
-            while(this.#arrayQuestionsGone.includes(randomQuestion)){
-                randomQuestion = currentQuiz.perguntas[Math.round(Math.random() * (currentQuiz.perguntas.length - 1))];
-            }
-        }else{
-            this.#arrayQuestionsGone = [];
+        const randomIndex = Math.round(Math.random() * (currentQuiz.perguntas.length - 1));
+        let randomQuestion = currentQuiz.perguntas[randomIndex];
+
+        if(this.#arrayQuestionsGone.length < currentQuiz.perguntas.length) {
+            while(this.#arrayQuestionsGone.includes(randomQuestion))
+                randomQuestion = currentQuiz.perguntas[randomIndex];
+        } else {
+            this.resetArrayQuestionsGone();
         }
+
         this.#arrayQuestionsGone.push(randomQuestion);
         this.#currentQuestion = randomQuestion;
         return randomQuestion;
     }
     generateNewRandomAlternative(randomQuestion){
-        const currentQuiz = this.getCurrentQuiz();
         const currentArrayAlternatives = this.getCurrentArrayAlternatives(randomQuestion);
-        let randomAlternative = currentArrayAlternatives[Math.round(Math.random() * (currentArrayAlternatives.length - 1))];
-        if(this.#arrayAlternativesGone.length < currentArrayAlternatives.length){
-            while(this.#arrayAlternativesGone.includes(randomAlternative)){
-                randomAlternative = currentArrayAlternatives[Math.round(Math.random() * (currentArrayAlternatives.length - 1))];
-            }
-        }else{
-            this.#arrayAlternativesGone = [];
+        const randomIndex = Math.round(Math.random() * (currentArrayAlternatives.length - 1));
+        let randomAlternative = currentArrayAlternatives[randomIndex];
+
+        if(this.#arrayAlternativesGone.length < currentArrayAlternatives.length) {
+            while(this.#arrayAlternativesGone.includes(randomAlternative))
+                randomAlternative = currentArrayAlternatives[randomIndex];
+        } else {
+            this.resetArrayAlternativesGone();
         }
+
         this.#arrayAlternativesGone.push(randomAlternative);
         return randomAlternative;
     }
@@ -124,40 +124,38 @@ class Quiz{
         alternativeChosen.classList.add("chosen");
     }
     deselectAlternative(alternativeChosen){
-        if(alternativeChosen !== null){
-            if(alternativeChosen.matches(".chosen")){
-                alternativeChosen.classList.remove("chosen");
-            }
-        }
+        if(alternativeChosen !== null && alternativeChosen.matches(".chosen"))
+            alternativeChosen.classList.remove("chosen");
     }
     clickAlternative(alternativeChosen){
-        if(!alternativeChosen.matches(".chosen")){
+        if(!alternativeChosen.matches(".chosen"))
             this.selectAlternative(alternativeChosen);
-        }else{
+        else
             this.deselectAlternative(alternativeChosen);
-        }
 
         this.verifyConfirmButton();
     }
     verifyConfirmButton(){
         const verify = this.#alternativesArea.some(alternative => alternative.matches(".chosen"));
-        if(verify){
+        if(verify)
             this.#buttonConfirm.classList.remove("disabled");
-        }else{
+        else
             this.#buttonConfirm.classList.add("disabled");
-        }
     }
-    verifyNextButton(){
+    habilityNextButton(){
         this.#buttonNext.classList.remove("disabled");
     }
-    getScore(){
-        return this.#score;
+    resetScore(){
+        this.#score = 0;
     }
     addScore(){
         this.#score++;
     }
-    resetScore(){
-        this.#score = 0;
+    resetArrayQuestionsGone(){
+        this.#arrayQuestionsGone = [];
+    }
+    resetArrayAlternativesGone(){
+        this.#arrayAlternativesGone = [];
     }
     createWarning(warningText, warningType){
         const warning = document.createElement("div");
@@ -191,28 +189,26 @@ class Quiz{
         return error;
     }
     removeWarning(){
-        const warning = document.querySelector(".alert");
-        warning.remove();
+        const warnings = document.querySelectorAll(".alert");
+        if(warnings != null)
+            warnings.forEach(warning => warning.remove());
     }
     showAnswers(){
         this.#alternativesArea.forEach((alternative) => {
-            if(alternative.innerHTML === this.getCurrentAlternativeCorrect()){
+            if(alternative.innerHTML === this.getCurrentAlternativeCorrect())
                 alternative.classList.add("correct");
-            }else{
+            else
                 alternative.classList.add("incorrect");
-            }
         });
     }
     showScore(){
         const scoreText = `Você fez ${this.#score} ponto(s)`;
-        const scoreClass = "alert-info";
-        
+        const scoreClass = "alert-info";   
         const score = this.createWarning(scoreText, scoreClass);
         return score;
     }
     closeModal(){
         const alternativeChosen = document.querySelector(".alternative.chosen");
-        
         this.#buttonClose.click();
         this.deselectAlternative(alternativeChosen);
     }
@@ -223,33 +219,33 @@ class Quiz{
 
             selectedAlternative.classList.remove("chosen");
 
-            if(selectedAlternative.innerHTML === this.getCurrentAlternativeCorrect()){
+            if(selectedAlternative.innerHTML === this.getCurrentAlternativeCorrect()) {
                 const correctWarning = this.showRight();
                 modalFooter.insertAdjacentElement("afterbegin", correctWarning);
                 this.addScore();
-            }else{
+            } else {
                 const incorrectWarning = this.showError();
                 modalFooter.insertAdjacentElement("afterbegin", incorrectWarning);
             }
             this.showAnswers();
-            this.verifyNextButton();
+            this.habilityNextButton();
             this.verifyConfirmButton();
 
         }
     }
     nextQuestion(){
         if(!this.#buttonNext.matches(".disabled")){
-            if(this.#arrayQuestionsGone.length < 5){
-                if(this.#arrayQuestionsGone.length === 4){
-                    this.#buttonNext.innerHTML = "Ver pontuação!";
-                }
+            if(this.#arrayQuestionsGone.length < this.getCurrentQuiz().perguntas.length) {
                 this.removeWarning();
                 this.generateStructure();
-            }else{
+                if(this.#arrayQuestionsGone.length === this.getCurrentQuiz().perguntas.length)
+                    this.#buttonNext.innerHTML = "Ver pontuação!";
+            } else {
                 const scoreWarning = this.showScore();
                 const container = document.querySelector(".container");
                 this.closeModal();
                 container.insertAdjacentElement("beforeend", scoreWarning);
+                this.#buttonNext.innerHTML = "Próxima";
             }
             this.#buttonNext.classList.add("disabled");
         }

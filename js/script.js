@@ -12,12 +12,13 @@ quizJson.forEach((quiz) => {
     dropdownMenu.insertAdjacentElement("beforeend", createLi);
 });
 
+const buttonStartQuiz = document.querySelector("#buttonStartQuiz");
 const buttonClose = document.querySelector(".btn-danger");
 const buttonConfirm = document.querySelector(".btn-info");
 const buttonNext = document.querySelector(".btn-success");
 const quizzes = document.querySelectorAll(".dropdown-item");
 const quizActive = document.querySelector(".dropdown-item.active");
 
-const quiz = new Quiz(quizzes, quizActive, buttonClose, buttonConfirm, buttonNext);
+const quiz = new Quiz(quizzes, quizActive, buttonStartQuiz, buttonClose, buttonConfirm, buttonNext);
 
 quiz.generateStructure();
