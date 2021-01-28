@@ -90,12 +90,11 @@ class Quiz{
     }
     generateNewRandomQuestion(){
         const currentQuiz = this.getCurrentQuiz();
-        const randomIndex = Math.round(Math.random() * (currentQuiz.perguntas.length - 1));
-        let randomQuestion = currentQuiz.perguntas[randomIndex];
+        let randomQuestion = currentQuiz.perguntas[Math.round(Math.random() * (currentQuiz.perguntas.length - 1))];
 
         if(this.#arrayQuestionsGone.length < currentQuiz.perguntas.length) {
             while(this.#arrayQuestionsGone.includes(randomQuestion))
-                randomQuestion = currentQuiz.perguntas[randomIndex];
+                randomQuestion = currentQuiz.perguntas[Math.round(Math.random() * (currentQuiz.perguntas.length - 1))];
         } else {
             this.resetArrayQuestionsGone();
         }
@@ -106,12 +105,11 @@ class Quiz{
     }
     generateNewRandomAlternative(randomQuestion){
         const currentArrayAlternatives = this.getCurrentArrayAlternatives(randomQuestion);
-        const randomIndex = Math.round(Math.random() * (currentArrayAlternatives.length - 1));
-        let randomAlternative = currentArrayAlternatives[randomIndex];
+        let randomAlternative = currentArrayAlternatives[Math.round(Math.random() * (currentArrayAlternatives.length - 1))];
 
         if(this.#arrayAlternativesGone.length < currentArrayAlternatives.length) {
             while(this.#arrayAlternativesGone.includes(randomAlternative))
-                randomAlternative = currentArrayAlternatives[randomIndex];
+                randomAlternative = currentArrayAlternatives[Math.round(Math.random() * (currentArrayAlternatives.length - 1))];
         } else {
             this.resetArrayAlternativesGone();
         }
