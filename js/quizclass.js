@@ -43,7 +43,7 @@ class Quiz{
     generateStructure(randomQuestion = this.generateNewRandomQuestion()){
         this.insertNameQuiz();
         this.insertQuestion(randomQuestion);
-        this.insertAlternatives(this.getCurrentArrayAlternatives(randomQuestion));
+        this.insertAlternatives(this.getCurrentArrayAlternatives());
         this.removeWarning();
     }
     insertNameQuiz(){
@@ -88,13 +88,17 @@ class Quiz{
         const currentAlternativeCorrect = currentQuiz.respostas[indexCurrentQuestion].correta;
         return currentAlternativeCorrect;
     }
+    generateRandomValueArray(array){
+        const randomIndex = Math.floor(Math.random() * array.length);
+        return array[randomIndex];
+    }
     generateNewRandomQuestion(){
-        const currentQuiz = this.getCurrentQuiz();
-        let randomQuestion = currentQuiz.perguntas[Math.round(Math.random() * (currentQuiz.perguntas.length - 1))];
+        const perguntas = this.getCurrentQuiz().perguntas;
+        let randomQuestion = this.generateRandomValueArray(perguntas);
 
-        if(this.#arrayQuestionsGone.length < currentQuiz.perguntas.length) {
+        if(this.#arrayQuestionsGone.length < perguntas.length) {
             while(this.#arrayQuestionsGone.includes(randomQuestion))
-                randomQuestion = currentQuiz.perguntas[Math.round(Math.random() * (currentQuiz.perguntas.length - 1))];
+                randomQuestion = this.generateRandomValueArray(perguntas);
         } else {
             this.resetArrayQuestionsGone();
         }
@@ -103,13 +107,13 @@ class Quiz{
         this.#currentQuestion = randomQuestion;
         return randomQuestion;
     }
-    generateNewRandomAlternative(randomQuestion){
-        const currentArrayAlternatives = this.getCurrentArrayAlternatives(randomQuestion);
-        let randomAlternative = currentArrayAlternatives[Math.round(Math.random() * (currentArrayAlternatives.length - 1))];
+    generateNewRandomAlternative(){
+        const currentArrayAlternatives = this.getCurrentArrayAlternatives();
+        let randomAlternative = this.generateRandomValueArray(currentArrayAlternatives);
 
         if(this.#arrayAlternativesGone.length < currentArrayAlternatives.length) {
             while(this.#arrayAlternativesGone.includes(randomAlternative))
-                randomAlternative = currentArrayAlternatives[Math.round(Math.random() * (currentArrayAlternatives.length - 1))];
+                randomAlternative = this.generateRandomValueArray(currentArrayAlternatives);
         } else {
             this.resetArrayAlternativesGone();
         }
