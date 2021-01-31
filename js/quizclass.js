@@ -15,10 +15,8 @@ class Quiz{
         this.#buttonClose = buttonClose;
         this.#buttonConfirm = buttonConfirm;
         this.#buttonNext = buttonNext;
-        this.#alternativesArea = [];
         this.#arrayQuestionsGone = []; 
         this.#arrayAlternativesGone = [];
-        this.#currentQuestion = "";
         this.#score = 0;
 
         this.#buttonStartQuiz.addEventListener("click", () => {
@@ -59,19 +57,19 @@ class Quiz{
     insertAlternatives(arrayAlternatives){
         const modalBody = document.querySelector(".modal-body");
         modalBody.innerHTML = "";
-        this.#alternativesArea = [];
 
         arrayAlternatives.forEach(() => {
             const alternativeArea = document.createElement("div");
             let alternative = this.generateNewRandomAlternative();
 
             alternativeArea.classList.add("alternative");
+            alternativeArea.setAttribute("data-inner", alternative);
             alternativeArea.innerHTML = alternative;
             alternativeArea.addEventListener("click", event => this.clickAlternative(event.target));
 
             modalBody.insertAdjacentElement("beforeend", alternativeArea);
-            this.#alternativesArea.push(alternativeArea);
         });
+        this.#alternativesArea = arrayAlternatives.map(alternative => document.querySelector(`[data-inner='${alternative}']`));
     }
     getCurrentQuiz(){
         const currentQuiz = quizJson[this.quizActive.getAttribute("data-index")];
