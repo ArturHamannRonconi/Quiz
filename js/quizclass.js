@@ -29,7 +29,7 @@ class Quiz{
         this.#buttonConfirm.addEventListener("click", () => this.confirmAlternative());
         this.#buttonClose.addEventListener("click", () => this.closeModal());
         this.quizzes.forEach(quiz => {
-            quiz.addEventListener("click", (event) => this.selectQuiz(event.target));
+            quiz.addEventListener("click", event => this.selectQuiz(event.target));
         });
     }
     selectQuiz(quizTarget){
@@ -59,6 +59,7 @@ class Quiz{
     insertAlternatives(arrayAlternatives){
         const modalBody = document.querySelector(".modal-body");
         modalBody.innerHTML = "";
+        this.#alternativesArea = [];
 
         arrayAlternatives.forEach(() => {
             const alternativeArea = document.createElement("div");
@@ -66,7 +67,7 @@ class Quiz{
 
             alternativeArea.classList.add("alternative");
             alternativeArea.innerHTML = alternative;
-            alternativeArea.addEventListener("click", (event) => this.clickAlternative(event.target));
+            alternativeArea.addEventListener("click", event => this.clickAlternative(event.target));
 
             modalBody.insertAdjacentElement("beforeend", alternativeArea);
             this.#alternativesArea.push(alternativeArea);
